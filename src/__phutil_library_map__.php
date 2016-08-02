@@ -1167,6 +1167,7 @@ phutil_register_library_map(array(
     'HarbormasterBuildableTransactionEditor' => 'applications/harbormaster/editor/HarbormasterBuildableTransactionEditor.php',
     'HarbormasterBuildableTransactionQuery' => 'applications/harbormaster/query/HarbormasterBuildableTransactionQuery.php',
     'HarbormasterBuildableViewController' => 'applications/harbormaster/controller/HarbormasterBuildableViewController.php',
+    'HarbormasterBuildkiteHookController' => 'applications/harbormaster/controller/HarbormasterBuildkiteHookController.php',
     'HarbormasterBuiltinBuildStepGroup' => 'applications/harbormaster/stepgroup/HarbormasterBuiltinBuildStepGroup.php',
     'HarbormasterCircleCIBuildStepImplementation' => 'applications/harbormaster/step/HarbormasterCircleCIBuildStepImplementation.php',
     'HarbormasterCircleCIBuildableInterface' => 'applications/harbormaster/interface/HarbormasterCircleCIBuildableInterface.php',
