@@ -23,10 +23,9 @@ final class HarbormasterBuildkiteBuildStepImplementation
     $hook_uri = '/harbormaster/hook/circleci/';
     $hook_uri = PhabricatorEnv::getProductionURI($hook_uri);
 
-    return pht(<<<EOTEXT
-Creates a Buildkite build. See [Buildkite’s Phabricator guide](https://buildkite.com/docs/guides/phabricator) for more information.
-EOTEXT
-    );
+    return pht(
+      'Creates a Buildkite build. See [Buildkite’s Phabricator'.
+      'guide](https://buildkite.com/docs/guides/phabricator) for more information.');
   }
 
   public function execute(
@@ -35,17 +34,19 @@ EOTEXT
 
     $viewer = PhabricatorUser::getOmnipotentUser();
     $settings = $this->getSettings();
+    $uri = $settings['uri'];
+  
+    $buildkite_hook_data = $this->buildkiteWebhookData(
+      $build,
+      $build_target,
+      $viewer);
 
-    $hook_uri = PhabricatorEnv::getProductionURI('/harbormaster/hook/buildkite/');
+    $json_data = phutil_json_encode($buildkite_hook_data);
 
-    $post_data = array(
-      // TODO:
-      // Data Buildkite needs to create a build
-      // The hook URI so it knows where to post back to
-    );
-
-    $future = id(new HTTPSFuture($settings['uri'], $post_data))
+    $future = id(new HTTPSFuture($uri, $json_data))
       ->setMethod('POST')
+      ->addHeader('Content-Type', 'application/json')
+      ->addHeader('Accept', 'application/json')
       ->setTimeout(60);
 
     $this->resolveFutures(
@@ -73,6 +74,38 @@ EOTEXT
 
   public function supportsWaitForMessage() {
     return true;
+  }
+
+  private function buildkiteWebhookData($build, $build_target, $viewer) {
+    $variables = $build_target->getVariables();
+    $hook_uri = PhabricatorEnv::getProductionURI(
+      '/harbormaster/hook/buildkite/');
+
+    $diffDict = array();
+    $commitDict = array();
+
+    $buildable = $build->getBuildable();
+    $object = $buildable->getBuildableObject();
+
+    if (!empty($variables['buildable.diff'])) {
+      $diffDict['revisionID'] = $object->getRevisionID();
+      $diffDict['dateCreated'] = $object->getDateCreated();
+      $diffDict['dateModified'] = $object->getDateModified();
+      $diffDict['sourceControlBaseRevision'] = $object->getSourceControlBaseRevision();
+      $diffDict = $diffDict + $object->getDiffAuthorshipDict();
+    }
+
+    if (!empty($variables['buildable.commit'])) {
+      // TODO: Add commit info
+      // $commitDict = $commitDict + $object->getCommitData()->toDictionary();
+    }
+
+    return array(
+      "variables" => $variables,
+      "hook_uri" => $hook_uri,
+      "diff" => $diffDict,
+      "commit" => $commitDict,
+    );
   }
 
 }
