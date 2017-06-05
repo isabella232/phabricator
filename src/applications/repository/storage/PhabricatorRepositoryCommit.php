@@ -628,6 +628,16 @@ final class PhabricatorRepositoryCommit
     return $this->getCommitIdentifier();
   }
 
+  public function getBuildkiteAuthor() {
+    $author = id(new PhabricatorUser())->loadOneWhere(
+      'phid = %s',
+      $this->getAuthorPHID());
+
+    return array(
+      'name' => $author->getRealName(),
+      'email' => $author->loadPrimaryEmailAddress(),
+    );
+  }
 
 /* -(  PhabricatorCustomFieldInterface  )------------------------------------ */
 

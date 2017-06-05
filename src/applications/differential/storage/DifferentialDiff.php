@@ -642,6 +642,17 @@ final class DifferentialDiff
     return 'HEAD';
   }
 
+  public function getBuildkiteAuthor() {
+    $author = id(new PhabricatorUser())->loadOneWhere(
+      'phid = %s',
+      $this->getAuthorPHID());
+
+    return array(
+      'name' => $author->getRealName(),
+      'email' => $author->loadPrimaryEmailAddress(),
+    );
+  }
+
 
   public function getStagingRef() {
     // TODO: We're just hoping to get lucky. Instead, `arc` should store

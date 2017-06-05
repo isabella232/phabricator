@@ -7,5 +7,6 @@ interface HarbormasterBuildkiteBuildableInterface {
 
   public function getBuildkiteBranch();
   public function getBuildkiteCommit();
+  public function getBuildkiteAuthor();
 
 }

@@ -91,6 +91,7 @@ EOTEXT
     $data_structure = array(
       'commit' => $object->getBuildkiteCommit(),
       'branch' => $object->getBuildkiteBranch(),
+      'author' => $object->getBuildkiteAuthor(),
       'message' => pht(
         'Harbormaster Build %s ("%s") for %s',
         $build->getID(),
